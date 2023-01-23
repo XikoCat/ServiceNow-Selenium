@@ -1,0 +1,31 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>ca.utm.utmor.testing</groupId>
+	<artifactId>TestSuite</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<dependencies>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>4.7.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.github.bonigarcia/webdrivermanager -->
+		<dependency>
+			<groupId>io.github.bonigarcia</groupId>
+			<artifactId>webdrivermanager</artifactId>
+			<version>5.3.1</version>
+		</dependency>
+		<!-- https://github.com/sukgu/shadow-automation-selenium -->
+		<dependency>
+			<groupId>io.github.sukgu</groupId>
+			<artifactId>automation</artifactId>
+			<version>0.1.4.1</version>
+		</dependency>
+		<!-- https://github.com/cdimascio/dotenv-kotlin -->
+		<dependency>
+			<groupId>io.github.cdimascio</groupId>
+			<artifactId>dotenv-kotlin</artifactId>
+			<version>6.4.0</version>
+		</dependency>
+	</dependencies>
+</project>
