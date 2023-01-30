@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import serviceNow.SNField.InvalidFieldException;
 
@@ -36,14 +37,9 @@ public class SNRecord {
 	 * Loads all values into memory, populates the fields array
 	 */
 	public void load() {
-		String FieldElementsCSS = "div[id^='element\\." + table.getName() + "\\.']";
+		String FieldElementsCSS = "form div[id^='element\\." + table.getName() + "\\.']";
 
-		try {
-			sn.shadow.findElement(FieldElementsCSS + ":first-of-type");
-		} catch (Exception e) {
-			sn.driver.switchTo().frame(sn.shadow.findElement("iframe#gsft_main"));
-			sn.shadow.findElement(FieldElementsCSS + ":first-of-type");
-		}
+		sn.driver.switchTo().frame(sn.shadow.findElement("iframe#gsft_main"));
 
 		List<WebElement> fieldElements = sn.driver.findElements(By.cssSelector(FieldElementsCSS));
 
@@ -73,6 +69,42 @@ public class SNRecord {
 
 	public String toString() {
 		return this.sys_id;
+	}
+
+	public void submit() {
+		sn.formHandler.submitRecord();
+	}
+
+	public void save() {
+		sn.formHandler.save();
+
+		String url = sn.driver.getCurrentUrl();
+
+		String sys_id_locator = "sys_id%3D";
+		int sys_id_start = url.indexOf(sys_id_locator) + sys_id_locator.length();
+		int sys_id_end = url.indexOf("%", sys_id_start + sys_id_locator.length());
+
+		this.sys_id = url.substring(sys_id_start, sys_id_end);
+		System.out.println(this.sys_id);
+	}
+
+	public void update() {
+		sn.formHandler.ClickUIAction("Update");
+	}
+
+	public void delete() {
+		sn.formHandler.ClickUIAction("Delete");
+
+		// Enter IFrame
+		sn.driver.switchTo().frame(sn.shadow.findElement("iframe#gsft_main"));
+
+		String confirmDeleteCSS = "#delete_confirm_form button#ok_button";
+		WebElement button = sn.shadow.findElement(confirmDeleteCSS);
+		sn.wait.until(ExpectedConditions.elementToBeClickable(button)).click();
+		
+		// Exit IFrame
+		sn.driver.switchTo().parentFrame();
+		
 	}
 
 }

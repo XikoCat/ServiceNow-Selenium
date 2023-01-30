@@ -37,11 +37,13 @@ public class SNTable {
 	 */
 	public void load() {
 		String RecordElementsCSS = "table#" + name + "_table > tbody > tr";
+
+		sn.driver.switchTo().frame(sn.shadow.findElement("iframe#gsft_main"));
 		try {
 			sn.shadow.findElement(RecordElementsCSS + ":first-of-type");
 		} catch (Exception e) {
-			sn.driver.switchTo().frame(sn.shadow.findElement("iframe#gsft_main"));
-			sn.shadow.findElement(RecordElementsCSS + ":first-of-type");
+			sn.driver.switchTo().parentFrame();
+			return;
 		}
 
 		List<WebElement> recordElements = sn.shadow.findElements(RecordElementsCSS);
@@ -51,6 +53,8 @@ public class SNTable {
 			SNRecord record = new SNRecord(sn, sys_id, this);
 			records.add(record);
 		}
+
+		sn.driver.switchTo().parentFrame();
 		System.out.println("Loaded " + recordElements.size() + " records from table '" + this.name + "'");
 	}
 
@@ -68,6 +72,12 @@ public class SNTable {
 
 	public void addRecord(SNRecord record) {
 		this.records.add(record);
+	}
+
+	public SNRecord newRecord() {
+		sn.formHandler.newRecord();
+		SNRecord r = new SNRecord(sn, "-1", this);
+		return r;
 	}
 
 }

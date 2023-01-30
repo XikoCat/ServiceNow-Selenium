@@ -26,7 +26,7 @@ public class SNInstance {
 	 * 
 	 * @throws InterruptedException
 	 */
-	public void open() throws InterruptedException {
+	public void open() {
 		// Open Service Now's Now Portal
 		sn.driver.get(URL_PROTOCOL + instanceId + URL_SN);
 		System.out.println(sn.driver.getWindowHandle());
@@ -57,7 +57,8 @@ public class SNInstance {
 		// Wait for the page title to be "ServiceNow" meaning the page is loaded
 		sn.wait.until(ExpectedConditions.titleContains("ServiceNow"));
 
-		Thread.sleep(3000);
+		sn.sleep(3000);
+		
 		System.out.println("Page Loaded");
 	}
 

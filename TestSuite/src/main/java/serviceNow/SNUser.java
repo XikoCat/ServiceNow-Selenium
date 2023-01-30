@@ -4,16 +4,18 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-public class User {
+public class SNUser {
 
 	private ServiceNow sn;
 
-	public User(ServiceNow serviceNow) {
+	public SNUser(ServiceNow serviceNow) {
 		this.sn = serviceNow;
 	}
 
-	public void impersonate(String userId) throws InterruptedException {
+	public void impersonate(String userId) {
 		System.out.println("Impersonating user: " + userId);
+		
+		sn.getInstance().goTo("");
 
 		openUserMenu();
 
@@ -26,7 +28,7 @@ public class User {
 		WebElement usernameField = sn.shadow.findElement("now-popover div.now-typeahead-field.now-form-field input");
 		usernameField.sendKeys(userId);
 
-		Thread.sleep(3000);
+		sn.sleep(5000);
 
 		// Select the first result
 		usernameField.sendKeys(Keys.ARROW_DOWN);
@@ -38,12 +40,13 @@ public class User {
 
 		// Wait for the portal page to load
 		sn.wait.until(ExpectedConditions.titleIs("ServiceNow"));
-		Thread.sleep(3000);
+		sn.sleep(3000);
 	}
 
-	public void unimpersonate() throws InterruptedException {
+	public void unimpersonate() {
 		System.out.println("Unimpersonating user");
 
+		sn.getInstance().goTo("");
 		openUserMenu();
 		
 		// Click the "Unimpersonate" menu item
@@ -53,7 +56,7 @@ public class User {
 
 		// Wait for the portal page to load
 		sn.wait.until(ExpectedConditions.titleIs("ServiceNow"));
-		Thread.sleep(3000);
+		sn.sleep(3000);
 	}
 	
 	private void openUserMenu() {

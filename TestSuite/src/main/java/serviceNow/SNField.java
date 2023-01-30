@@ -5,6 +5,7 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class SNField {
@@ -62,7 +63,11 @@ public class SNField {
 		case "reference":
 			this.value = new Field_Reference().read(fieldCSS);
 			break;
+		case "journal_input":
+			this.value = new Field_Journal().read(fieldCSS);
+			break;
 		default:
+			System.out.println("Found new field type: " + type);
 			throw new InvalidFieldException();
 		}
 
@@ -99,7 +104,11 @@ public class SNField {
 		case "reference":
 			new Field_Reference().write(fieldCSS, new_value);
 			break;
+		case "journal_input":
+			new Field_Journal().write(fieldCSS, new_value);
+			break;
 		default:
+			System.out.println("Found new field type: " + type);
 			throw new InvalidFieldException();
 		}
 
@@ -110,10 +119,15 @@ public class SNField {
 		System.out.println("Updated value to '" + new_value + "' on field '" + name + "'");
 	}
 
-	public void revertValue() throws InvalidFieldException {
-		this.setValue(initial_value);
+	public void revertValue() {
+		if (initial_value != null)
+			try {
+				this.setValue(initial_value);
+			} catch (InvalidFieldException e) {
+				e.printStackTrace();
+			}
 	}
-	
+
 	public String getType() {
 		return this.type;
 	}
@@ -192,8 +206,9 @@ public class SNField {
 			Keys key = to_select > selected ? Keys.ARROW_DOWN : Keys.ARROW_UP;
 
 			WebElement selectBox = sn.driver.findElement(By.cssSelector(selectBoxCSS));
-			sn.wait.until(ExpectedConditions.elementToBeClickable(selectBox));
-			selectBox.click();
+			sn.wait.until(ExpectedConditions.elementToBeClickable(selectBox)).click();
+
+			sn.sleep(100);
 
 			while (offset > 0) {
 				selectBox.sendKeys(key);
@@ -224,21 +239,41 @@ public class SNField {
 
 	}
 
-	class Field_Reference implements FieldBase {
+	class Field_Journal implements FieldBase {
 
 		@Override
 		public String read(String fieldLocationCSS) {
-			return sn.driver.findElement(By.cssSelector(fieldLocationCSS + " > .input_controls > input")).getAttribute("value");
-					
+			String textAreaCSS = "textarea#activity-stream-comments-textarea";
+			return sn.driver.findElement(By.cssSelector(textAreaCSS)).getAttribute("value");
 		}
 
 		@Override
 		public void write(String fieldLocationCSS, String new_value) {
-			// TODO Auto-generated method stub
-			
+			String textAreaCSS = "textarea#activity-stream-comments-textarea";
+			WebElement textArea = sn.driver.findElement(By.cssSelector(textAreaCSS));
+			textArea.clear();
+			textArea.sendKeys(new_value);
+		}
+
+	}
+
+	class Field_Reference implements FieldBase {
+
+		@Override
+		public String read(String fieldLocationCSS) {
+			String inputCSS = fieldLocationCSS + " > .input_controls > input";
+			return sn.driver.findElement(By.cssSelector(inputCSS)).getAttribute("value");
+
+		}
+
+		@Override
+		public void write(String fieldLocationCSS, String new_value) {
+			String inputCSS = fieldLocationCSS + " > .input_controls > .input-group > input";
+			WebElement input = sn.driver.findElement(By.cssSelector(inputCSS));
+			input.sendKeys(new_value);
 		}
 	}
-	
+
 	// Exceptions
 	public class InvalidFieldException extends Exception {
 
